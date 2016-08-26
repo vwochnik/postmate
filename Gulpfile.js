@@ -59,6 +59,7 @@ gulp.task('test', done => {
           useIframe: false,
         },
       }, exitCode => {
+        console.log("EXIT CODE", exitCode);
         child.close();
         done();
         process.exit(exitCode);
