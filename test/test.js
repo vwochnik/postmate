@@ -3,7 +3,14 @@ var expect = chai.expect;
 describe('postmate', function() {
 
   afterEach(function () {
-    document.getElementById('frame').innerHTML = "";
+
+    var frame = document.getElementById('frame');
+    if(!frame) {
+      frame = document.createElement('div');
+      frame.id = 'frame';
+      document.body.appendChild(frame);
+    }
+    frame.innerHTML = "";
   });
 
   it('should pass', function() {
@@ -13,7 +20,7 @@ describe('postmate', function() {
   it('should complete a handshake', function (done) {
     new Postmate({
       container: document.getElementById('frame'),
-      url: 'http://localhost:9000/child.html'
+      url: 'http://localhost:9001/child.html'
     }).then(function (child) {
       child.destroy();
       done();
@@ -23,14 +30,14 @@ describe('postmate', function() {
   it('should fetch values from the child model', function (done) {
     new Postmate({
       container: document.getElementById('frame'),
-      url: 'http://localhost:9000/child.html'
+      url: 'http://localhost:9001/child.html'
     }).then(function (child) {
       child.get('height').then(function (height) {
         expect(height).to.equal(1234);
         child.destroy();
         done();
       })
-      .catch(err => done(err));
+      .catch(function (err) { done(err) });
     });
   });
 
@@ -40,7 +47,7 @@ describe('postmate', function() {
 
     new Postmate({
       container: document.getElementById('frame'),
-      url: 'http://localhost:9000/child.html',
+      url: 'http://localhost:9001/child.html',
       model: {
         uid: uid
       }
@@ -50,7 +57,7 @@ describe('postmate', function() {
         child.destroy();
         done();
       })
-      .catch(err => done(err));
+      .catch(function (err) { done(err) });
     });
   });
 
@@ -60,7 +67,7 @@ describe('postmate', function() {
 
     new Postmate({
       container: document.getElementById('frame'),
-      url: 'http://localhost:9000/child.html',
+      url: 'http://localhost:9001/child.html',
       model: {
         uid: uid
       }
@@ -73,7 +80,7 @@ describe('postmate', function() {
       });
 
       // This is abnormal, but we are going to trigger the event 1 second after this function is called
-      child.get('doValidate').catch(err => done(err));
+      child.get('doValidate').catch(function (err) { done(err) });
     });
   });
 });

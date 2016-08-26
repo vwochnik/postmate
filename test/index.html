@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<!--
+The entry point for client. This file is loaded just once when the client is captured.
+It contains socket.io and all the communication logic.
+-->
+<html>
+<head>
+  <title>Karma</title>
+  <link href="favicon.ico" rel="icon" type="image/x-icon">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <div id="banner" class="offline">
+    <a href="debug.html" target="_blank" rel="noreferrer" class="btn-debug">DEBUG</a>
+    <h1 id="title">Karma - starting</h1>
+  </div>
+
+  <ul id="browsers"></ul>
+
+  <iframe id="context" src="about:blank" width="100%" height="100%"></iframe>
+
+  <script src="socket.io/socket.io.js"></script>
+  <script src="karma.js"></script>
+</body>
+</html>

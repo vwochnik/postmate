@@ -5,15 +5,13 @@ const eslint = require('gulp-eslint');
 const gulp = require('gulp');
 const header = require('gulp-header');
 const http = require('http');
+const karma = require('karma');
 const minify = require('uglify-js').minify;
-const mochaPhantomJS = require('gulp-mocha-phantomjs');
+const path = require('path');
 const rollup = require('rollup-stream');
 const serveStatic = require('serve-static');
 const source = require('vinyl-source-stream');
 const uglify = require('rollup-plugin-uglify');
-
-var parentServer
-var childServer;
 
 const pkg = require('./package.json');
 const banner = ['/**',
@@ -48,28 +46,25 @@ gulp.task('lint', () =>
     .pipe(eslint.failAfterError())
 );
 
-gulp.task('parent-test-server', done => {
-  parentServer = http.createServer(
-      connect()
-        .use(serveStatic('.'))
-        .use(serveStatic('test/fixtures'))
-    )
-    .listen(9000, done);
-});
-gulp.task('child-test-server', done => {
-  childServer = http.createServer(
-      connect()
-        .use(serveStatic('.'))
-        .use(serveStatic('test/fixtures'))
-    )
-    .listen(9001, done);
-});
-
-gulp.task('test', ['parent-test-server', 'child-test-server'], () => {
-  const stream = mochaPhantomJS();
-  stream.write({ path: 'http://localhost:9001/test/runner.html' });
-  stream.end();
-  return stream;
+gulp.task('test', done => {
+  const testFixtures = connect().use(serveStatic('.')).use(serveStatic('test/fixtures'));
+  const child = http.createServer(testFixtures)
+    .listen(9001, () => {
+      const server = new karma.Server({
+        autoWatch: false,
+        configFile: path.join(__dirname, './karma.conf.js'),
+        singleRun: true,
+        port: 9876,
+        client: {
+          useIframe: false,
+        },
+      }, exitCode => {
+        child.close();
+        done();
+        process.exit(exitCode);
+      });
+      server.start();
+    });
 });
 
 gulp.task('watch', () => gulp.watch('./src/postmate.js', ['build']));
