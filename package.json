@@ -4,6 +4,7 @@
   "description": "A powerful, simple, promise-based postMessage library",
   "main": "build/postmate.min.js",
   "files": [
+    "src",
     "build"
   ],
   "devDependencies": {
